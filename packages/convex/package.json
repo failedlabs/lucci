@@ -1,0 +1,24 @@
+{
+  "name": "@lucci/convex",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "convex dev",
+    "import": "convex import --table tasks sampleData.jsonl"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "convex": "^1.24.8",
+    "convex-helpers": "^0.1.92"
+  },
+  "devDependencies": {
+    "@lucci/typescript-config": "workspace:*"
+  },
+  "exports": {
+    "./client": "./src/client.ts",
+    "./use-query": "./src/use-query.ts",
+    "./generated/*": "./convex/_generated/*"
+  }
+}

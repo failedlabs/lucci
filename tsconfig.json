@@ -1,0 +1,4 @@
+{
+  "extends": "@lucci/typescript-config/base.json"
+}
+
