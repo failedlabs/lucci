@@ -2,23 +2,27 @@ import { defineSchema, defineTable } from "convex/server"
 import { v } from "convex/values"
 
 export default defineSchema({
+  users: defineTable({
+    clerkUser: v.any(),
+    color: v.optional(v.string()),
+  }).index("by_clerk_id", ["clerkUser.id"]),
   workspaces: defineTable({
     name: v.string(),
     notes: v.optional(v.string()),
-    ownerId: v.string(),
-    members: v.array(v.string()),
+    userDefault: v.boolean(),
+    ownerId: v.id("users"),
+    members: v.array(v.id("users")),
   }).index("by_owner", ["ownerId"]),
   folders: defineTable({
     name: v.string(),
     workspaceId: v.id("workspaces"),
-    ownerId: v.string(),
+    ownerId: v.id("users"),
     parentFolderId: v.optional(v.id("folders")),
     description: v.optional(v.string()),
     isArchived: v.boolean(),
     isPrivate: v.boolean(),
   })
-    .index("by_workspace_parent", ["workspaceId", "parentFolderId"])
-    .index("by_workspace_name", ["workspaceId", "name"])
+    .index("by_workspace_id", ["workspaceId"])
     .index("by_owner", ["ownerId"]),
   bookmarks: defineTable({
     title: v.string(),
@@ -27,7 +31,7 @@ export default defineSchema({
     notes: v.optional(v.string()),
     workspaceId: v.id("workspaces"),
     folderId: v.optional(v.id("folders")),
-    ownerId: v.string(),
+    ownerId: v.id("users"),
     archived: v.boolean(),
     isPrivate: v.boolean(),
     favorited: v.boolean(),
