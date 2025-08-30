@@ -25,7 +25,7 @@ export default function RootLayout({
       <ConvexClientProvider>
         <html lang="en" suppressHydrationWarning>
           <body
-            className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased`}
+            className={`${fontSans.variable} ${fontMono.variable} min-h-svh font-sans antialiased`}
           >
             <Providers>{children}</Providers>
           </body>
