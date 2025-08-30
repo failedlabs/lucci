@@ -13,6 +13,8 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server"
+import type * as bookmarks from "../bookmarks.js"
+import type * as folders from "../folders.js"
 import type * as http from "../http.js"
 import type * as users from "../users.js"
 import type * as workspaces from "../workspaces.js"
@@ -26,6 +28,8 @@ import type * as workspaces from "../workspaces.js"
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  bookmarks: typeof bookmarks
+  folders: typeof folders
   http: typeof http
   users: typeof users
   workspaces: typeof workspaces
