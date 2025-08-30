@@ -3,7 +3,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@lucci/ui/components/sidebar"
-import { ChevronRight, Folder, FolderOpen } from "lucide-react"
+import { ChevronRight, Folder, FolderOpen, Lock } from "lucide-react"
 import Link from "next/link"
 
 export type FolderWithChildren = Doc<"folders"> & {
@@ -51,7 +51,7 @@ export function FolderItem({
               {!hasChildren && <Folder className="h-4 w-4" />}
               <span>{folder.name}</span>
               {folder.isPrivate && (
-                <span className="text-muted-foreground text-xs">(Private)</span>
+                <Lock className="text-muted-foreground h-4 w-4" />
               )}
             </div>
             <div className="flex items-center gap-2">

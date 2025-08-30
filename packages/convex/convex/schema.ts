@@ -7,8 +7,10 @@ export default defineSchema({
     color: v.optional(v.string()),
   }).index("by_clerk_id", ["clerkUser.id"]),
   workspaces: defineTable({
+    icon: v.string(),
     name: v.string(),
     notes: v.optional(v.string()),
+    background: v.string(),
     userDefault: v.boolean(),
     ownerId: v.id("users"),
     members: v.array(v.id("users")),

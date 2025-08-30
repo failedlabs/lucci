@@ -1,12 +1,5 @@
-import { Button } from "@lucci/ui/components/button"
+import { BookmarksList } from "@/components/bookmarks-list"
 
 export default function Page() {
-  return (
-    <div className="flex min-h-svh items-center justify-center">
-      <div className="flex flex-col items-center justify-center gap-4">
-        <h1 className="text-2xl font-bold">Hello World</h1>
-        <Button size="sm">Button</Button>
-      </div>
-    </div>
-  )
+  return <BookmarksList />
 }
