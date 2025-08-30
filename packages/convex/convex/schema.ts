@@ -12,20 +12,22 @@ export default defineSchema({
     userDefault: v.boolean(),
     ownerId: v.id("users"),
     members: v.array(v.id("users")),
-  }).index("by_owner", ["ownerId"]),
+  })
+    .index("by_owner", ["ownerId"])
+    .index("by_member", ["members"]),
   folders: defineTable({
     name: v.string(),
     workspaceId: v.id("workspaces"),
     ownerId: v.id("users"),
     parentFolderId: v.optional(v.id("folders")),
-    description: v.optional(v.string()),
+    notes: v.optional(v.string()),
     isArchived: v.boolean(),
     isPrivate: v.boolean(),
   })
     .index("by_workspace_id", ["workspaceId"])
     .index("by_owner", ["ownerId"]),
   bookmarks: defineTable({
-    title: v.string(),
+    name: v.string(),
     url: v.string(),
     domain: v.string(),
     notes: v.optional(v.string()),
@@ -34,11 +36,11 @@ export default defineSchema({
     ownerId: v.id("users"),
     archived: v.boolean(),
     isPrivate: v.boolean(),
-    favorited: v.boolean(),
+    favorite: v.boolean(),
     tags: v.array(v.string()),
     metadata: v.string(),
   })
-    .index("by_workspace_folder", ["workspaceId", "folderId"])
+    .index("by_workspace_id", ["workspaceId"])
     .index("by_owner", ["ownerId"])
     .index("by_url", ["workspaceId", "url"]),
 })
