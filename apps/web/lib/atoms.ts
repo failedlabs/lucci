@@ -2,6 +2,8 @@ import { FolderWithChildren } from "@/components/folder-item"
 import { Doc, Id } from "@lucci/convex/generated/dataModel.js"
 import { atom } from "jotai"
 
+export const showNewBookmarkAtom = atom<boolean>(false)
+
 export const workspacesAtom = atom<Doc<"workspaces">[]>([])
 export const foldersAtom = atom<Doc<"folders">[]>([])
 export const bookmarksAtom = atom<Doc<"bookmarks">[]>([])

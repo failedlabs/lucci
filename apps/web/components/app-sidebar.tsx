@@ -19,7 +19,11 @@ import { Id } from "@lucci/convex/generated/dataModel.js"
 import { FolderItem } from "./folder-item"
 import { NavWorkspace } from "./nav-workspace"
 import { useAtom, useAtomValue, useSetAtom } from "jotai"
-import { expandedFoldersAtom, folderIdAtom, foldersTreeAtom } from "@/lib/atoms"
+import {
+  expandedFoldersAtom,
+  foldersTreeAtom,
+  showNewBookmarkAtom,
+} from "@/lib/atoms"
 
 const items = [
   {
@@ -35,6 +39,7 @@ const items = [
 ]
 
 export function AppSidebar() {
+  const setShowNewBookmark = useSetAtom(showNewBookmarkAtom)
   const [expandedFolders, setExpandedFolders] = useAtom(expandedFoldersAtom)
   const folderTree = useAtomValue(foldersTreeAtom)
 
@@ -59,7 +64,10 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <Button className="font-bold">
+          <Button
+            className="font-bold"
+            onClick={() => setShowNewBookmark(true)}
+          >
             <PlusCircle />
             New Bookmark
           </Button>
