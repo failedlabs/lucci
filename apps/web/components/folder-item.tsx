@@ -1,8 +1,10 @@
-import { Doc } from "@lucci/convex/generated/dataModel.js"
+import { expandedFoldersAtom, folderIdAtom } from "@/lib/atoms"
+import { Doc, Id } from "@lucci/convex/generated/dataModel.js"
 import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@lucci/ui/components/sidebar"
+import { useAtomValue, useSetAtom } from "jotai"
 import { ChevronRight, Folder, FolderOpen, Lock } from "lucide-react"
 import Link from "next/link"
 
@@ -14,24 +16,26 @@ export function FolderItem({
   folder,
   level = 0,
   toggleFolder,
-  expandedFolders,
 }: {
   folder: FolderWithChildren
   level?: number
-  toggleFolder: (id: string) => void
-  expandedFolders: Set<string>
+  toggleFolder: (id: Id<"folders">) => void
 }) {
   const hasChildren = folder.children.length > 0
+  const expandedFolders = useAtomValue(expandedFoldersAtom)
+  const setFolderId = useSetAtom(folderIdAtom)
   const isExpanded = expandedFolders.has(folder._id)
 
   const handleChevronClick = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
+    setFolderId(folder._id)
     toggleFolder(folder._id)
   }
 
   const handleFolderClick = () => {
     if (hasChildren && !isExpanded) {
+      setFolderId(folder._id)
       toggleFolder(folder._id)
     }
   }
@@ -75,7 +79,6 @@ export function FolderItem({
               key={child._id}
               folder={child}
               level={level + 1}
-              expandedFolders={expandedFolders}
               toggleFolder={toggleFolder}
             />
           ))}
