@@ -13,7 +13,7 @@ import {
   SidebarMenuItem,
 } from "@lucci/ui/components/sidebar"
 import { Button } from "@lucci/ui/components/button"
-import { Home, PlusCircle, Star } from "lucide-react"
+import { Home, Plus, PlusCircle, Star } from "lucide-react"
 import Link from "next/link"
 import { Id } from "@lucci/convex/generated/dataModel.js"
 import { FolderItem } from "./folder-item"
@@ -23,7 +23,9 @@ import {
   expandedFoldersAtom,
   foldersTreeAtom,
   showNewBookmarkAtom,
+  showNewFolderAtom,
 } from "@/lib/atoms"
+import { useState } from "react"
 
 const items = [
   {
@@ -40,6 +42,7 @@ const items = [
 
 export function AppSidebar() {
   const setShowNewBookmark = useSetAtom(showNewBookmarkAtom)
+  const setShowNewFolder = useSetAtom(showNewFolderAtom)
   const [expandedFolders, setExpandedFolders] = useAtom(expandedFoldersAtom)
   const folderTree = useAtomValue(foldersTreeAtom)
 
@@ -92,7 +95,17 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Folders</SidebarGroupLabel>
+          <div className="flex items-center justify-between">
+            <SidebarGroupLabel>Folders</SidebarGroupLabel>
+            <Button
+              size={"icon"}
+              variant={"ghost"}
+              className="text-muted-foreground"
+              onClick={() => setShowNewFolder(true)}
+            >
+              <Plus />
+            </Button>
+          </div>
           <SidebarGroupContent>
             <SidebarMenu>
               {folderTree.map((folder) => (
