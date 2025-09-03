@@ -66,6 +66,7 @@ export function NewBookmark() {
       } satisfies Doc<"bookmarks">
 
       setBookmarks((bookmarks) => [...bookmarks, bookmark])
+      setShowNewBookmark(false)
     },
   })
 
@@ -115,27 +116,14 @@ export function NewBookmark() {
           <div className="space-y-4 p-4 pb-0">
             <form.Field
               name="name"
-              validators={{
-                onChange: ({ value }) => {
-                  if (!value) {
-                    return "An URL is required"
-                  }
-                  if (!assertIsUrl(value)) {
-                    return "Value needs to be a valid URL"
-                  }
-
-                  return undefined
-                },
-              }}
               children={(field) => {
                 return (
                   <>
                     <div className="grid w-full max-w-sm items-center gap-3">
                       <Label htmlFor="picture">Name</Label>
                       <Input
-                        required
                         id={field.name}
-                        placeholder="Save as you wish... (not required)"
+                        placeholder="Save it as you wish... (not required)"
                         name={field.name}
                         value={field.state.value}
                         onBlur={field.handleBlur}
