@@ -3,6 +3,7 @@
 import {
   bookmarksAtom,
   foldersAtom,
+  userIdAtom,
   workspaceIdAtom,
   workspacesAtom,
 } from "@/lib/atoms"
@@ -12,13 +13,20 @@ import { useEffect } from "react"
 
 export function StateSetupWrapper({
   children,
+  userId,
 }: Readonly<{
   children: React.ReactNode
+  userId: string
 }>) {
+  const setUserId = useSetAtom(userIdAtom)
   const setWorkspaces = useSetAtom(workspacesAtom)
   const setBookmarks = useSetAtom(bookmarksAtom)
   const setFolders = useSetAtom(foldersAtom)
   const setWorkspaceId = useSetAtom(workspaceIdAtom)
+
+  useEffect(() => {
+    setUserId(userId)
+  }, [userId])
 
   useEffect(() => {
     setWorkspaces(workspacesMock)

@@ -1,7 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google"
 
 import "@lucci/ui/globals.css"
-import { Providers } from "@/components/providers"
 import { ClerkProvider } from "@clerk/nextjs"
 import ConvexClientProvider from "@/components/convex-provider"
 
@@ -27,7 +26,7 @@ export default function RootLayout({
           <body
             className={`${fontSans.variable} ${fontMono.variable} min-h-svh font-sans antialiased`}
           >
-            <Providers>{children}</Providers>
+            {children}
           </body>
         </html>
       </ConvexClientProvider>
