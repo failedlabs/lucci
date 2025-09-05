@@ -4,14 +4,22 @@ import { Navbar } from "@/components/navbar"
 import { NewBookmark } from "@/components/new-bookmark"
 import { FloatingBottomBar } from "@/components/floating-bottom-bar"
 import { NewFolder } from "@/components/new-folder"
+import { auth } from "@clerk/nextjs/server"
+import { Providers } from "@/components/providers"
 
-export default function AppLayout({
+export default async function AppLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const { userId } = await auth()
+
+  if (!userId) {
+    return <div>Sign in to view this page</div>
+  }
+
   return (
-    <>
+    <Providers userId={userId!}>
       <AppSidebar />
       <SidebarInset>
         <Navbar />
@@ -21,6 +29,6 @@ export default function AppLayout({
       <FloatingBottomBar />
       <NewBookmark />
       <NewFolder />
-    </>
+    </Providers>
   )
 }

@@ -5,9 +5,14 @@ import { ThemeProvider as NextThemesProvider } from "next-themes"
 import { SidebarProvider } from "@lucci/ui/components/sidebar"
 import { StateSetupWrapper } from "./state-setup-wrapper"
 
-export function Providers({ children }: { children: React.ReactNode }) {
+interface Props {
+  children: React.ReactNode
+  userId: string
+}
+
+export function Providers({ children, userId }: Props) {
   return (
-    <StateSetupWrapper>
+    <StateSetupWrapper userId={userId}>
       <NextThemesProvider
         attribute="class"
         defaultTheme="system"
