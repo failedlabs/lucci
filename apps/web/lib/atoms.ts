@@ -2,9 +2,11 @@ import { FolderWithChildren } from "@/components/folder-item"
 import { Doc, Id } from "@lucci/convex/generated/dataModel.js"
 import { atom } from "jotai"
 
-export const userIdAtom = atom<string | null>("")
+export const userIdAtom = atom<Id<"users"> | null>(null)
+export const userClerkIdAtom = atom<string | null>("")
 export const showNewBookmarkAtom = atom<boolean>(false)
 export const showNewFolderAtom = atom<boolean>(false)
+export const showNewWorkspaceAtom = atom<boolean>(false)
 
 export const workspacesAtom = atom<Doc<"workspaces">[]>([])
 export const foldersAtom = atom<Doc<"folders">[]>([])

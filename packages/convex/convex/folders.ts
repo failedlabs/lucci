@@ -1,6 +1,7 @@
 import { v } from "convex/values"
 import { mutation, query } from "./_generated/server"
 import { Id } from "./_generated/dataModel"
+import { foldersFields } from "./schema"
 
 export const workspaceFolders = query({
   args: {
@@ -15,37 +16,24 @@ export const workspaceFolders = query({
 })
 
 export const createFolder = mutation({
-  args: {
-    userId: v.id("users"),
-    name: v.string(),
-    notes: v.optional(v.string()),
-    isPrivate: v.optional(v.boolean()),
-    workspaceId: v.id("workspaces"),
-    parentFolderId: v.optional(v.id("folders")),
-  },
+  args: foldersFields,
   handler: async (
     ctx,
     {
-      userId,
+      ownerId,
+      isArchived,
       name,
       notes,
       isPrivate = false,
       workspaceId,
       parentFolderId,
-    }: {
-      userId: Id<"users">
-      name: string
-      notes?: string
-      parentFolderId?: Id<"folders">
-      isPrivate?: boolean
-      workspaceId: Id<"workspaces">
     },
   ) => {
     const id = await ctx.db.insert("folders", {
       name,
-      isArchived: false,
+      isArchived,
       isPrivate,
-      ownerId: userId,
+      ownerId,
       workspaceId,
       notes,
       parentFolderId,

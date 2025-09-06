@@ -15,13 +15,18 @@ import { AnyFieldApi, useForm } from "@tanstack/react-form"
 import { Doc } from "@lucci/convex/generated/dataModel.js"
 import { Input } from "@lucci/ui/components/input"
 import { Textarea } from "@lucci/ui/components/textarea"
-import { useAtom, useAtomValue, useSetAtom } from "jotai"
+import { useAtom, useAtomValue } from "jotai"
 import {
-  bookmarksAtom,
   folderIdAtom,
   showNewBookmarkAtom,
+  userIdAtom,
   workspaceIdAtom,
 } from "@/lib/atoms"
+import { useMutation } from "@lucci/convex/use-query"
+import { api } from "@lucci/convex/generated/api.js"
+import { fetchMetadata } from "@/app/fetch-metadata"
+import { useState } from "react"
+import { Loader2Icon } from "lucide-react"
 
 function UrlFieldInfo({ field }: { field: AnyFieldApi }) {
   return (
@@ -36,10 +41,13 @@ function UrlFieldInfo({ field }: { field: AnyFieldApi }) {
 }
 
 export function NewBookmark() {
+  const userId = useAtomValue(userIdAtom)
   const workspaceId = useAtomValue(workspaceIdAtom)
   const folderId = useAtomValue(folderIdAtom)
-  const setBookmarks = useSetAtom(bookmarksAtom)
   const [showNewBookmark, setShowNewBookmark] = useAtom(showNewBookmarkAtom)
+
+  const createBookmark = useMutation(api.bookmarks.createBookmark)
+  const [loading, setLoading] = useState(false)
 
   const form = useForm({
     defaultValues: {
@@ -47,26 +55,43 @@ export function NewBookmark() {
       url: "",
     } satisfies Pick<Doc<"bookmarks">, "name" | "url">,
     onSubmit: async ({ value }) => {
-      const url = new URL(value.url)
-      const bookmark = {
-        name: value.name,
-        url: value.url,
-        domain: url.hostname,
-        favorite: false,
-        archived: false,
-        folderId: folderId || undefined,
-        isPrivate: false,
-        metadata: "{}",
-        notes: undefined,
-        ownerId: "" as any,
-        _id: "" as any,
-        _creationTime: 29828121,
-        tags: [],
-        workspaceId: workspaceId!,
-      } satisfies Doc<"bookmarks">
+      try {
+        setLoading(true)
+        const url = new URL(value.url)
+        const { data: metadata, error } = await fetchMetadata(value.url)
 
-      setBookmarks((bookmarks) => [...bookmarks, bookmark])
-      setShowNewBookmark(false)
+        if (error || !metadata) {
+          throw Error("Error getting metadata of url")
+        }
+
+        const bookmark = {
+          name: value.name === "" ? metadata.title || "" : value.name,
+          url: value.url,
+          domain: url.hostname,
+          favorite: false,
+          archived: false,
+          folderId: folderId || undefined,
+          isPrivate: false,
+          metadata: JSON.stringify(metadata),
+          notes: metadata.description || undefined,
+          ownerId: userId!,
+          tags: [],
+          workspaceId: workspaceId!,
+        } satisfies Omit<Doc<"bookmarks">, "_id" | "_creationTime">
+
+        await createBookmark({
+          ...bookmark,
+        })
+        // bookmark._id = id
+
+        // setBookmarks((bookmarks) => [...bookmarks, bookmark])
+        form.reset()
+        setShowNewBookmark(false)
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setLoading(false)
+      }
     },
   })
 
@@ -137,18 +162,6 @@ export function NewBookmark() {
             />
             <form.Field
               name="url"
-              validators={{
-                onChange: ({ value }) => {
-                  if (!value) {
-                    return "An URL is required"
-                  }
-                  if (!assertIsUrl(value)) {
-                    return "Value needs to be a valid URL"
-                  }
-
-                  return undefined
-                },
-              }}
               children={(field) => {
                 // Avoid hasty abstractions. Render props are great!
                 return (
@@ -173,9 +186,14 @@ export function NewBookmark() {
           </div>
 
           <DrawerFooter>
-            <Button type="submit">Submit</Button>
+            <Button type="submit" disabled={loading}>
+              {loading && <Loader2Icon className="animate-spin" />}
+              Submit
+            </Button>
             <DrawerClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline" disabled={loading}>
+                Cancel
+              </Button>
             </DrawerClose>
           </DrawerFooter>
         </form>

@@ -13,12 +13,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@lucci/ui/components/dropdown-menu"
-import { ChevronsUpDown } from "lucide-react"
+import { ChevronsUpDown, Plus } from "lucide-react"
 import { WorkspaceCard } from "./workspace-card"
-import { useAtomValue } from "jotai"
-import { selectedWorkspaceAtom, workspacesAtom } from "@/lib/atoms"
+import { useAtomValue, useSetAtom } from "jotai"
+import {
+  selectedWorkspaceAtom,
+  showNewWorkspaceAtom,
+  workspaceIdAtom,
+  workspacesAtom,
+} from "@/lib/atoms"
 
 export function NavWorkspace() {
+  const setShowNewWorkspace = useSetAtom(showNewWorkspaceAtom)
+  const setWorkspaceId = useSetAtom(workspaceIdAtom)
   const workspaces = useAtomValue(workspacesAtom)
   const workspace = useAtomValue(selectedWorkspaceAtom)
   const { isMobile } = useSidebar()
@@ -51,11 +58,21 @@ export function NavWorkspace() {
                 <DropdownMenuItem
                   key={workspace._id}
                   className="cursor-pointer"
+                  onClick={() => setWorkspaceId(workspace._id)}
                 >
                   <WorkspaceCard workspace={workspace} />
                 </DropdownMenuItem>
               ))}
             </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+
+            <SidebarMenuButton
+              size="lg"
+              onClick={() => setShowNewWorkspace(true)}
+            >
+              <Plus />
+              New Workspace
+            </SidebarMenuButton>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

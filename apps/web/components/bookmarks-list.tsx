@@ -13,10 +13,28 @@ import {
   PopoverTrigger,
 } from "@lucci/ui/components/popover"
 import { Button } from "@lucci/ui/components/button"
-import { ExternalLink, Star, Lock, Archive, MoreHorizontal } from "lucide-react"
+import {
+  ExternalLink,
+  Star,
+  Lock,
+  Archive,
+  MoreHorizontal,
+  Edit,
+  Trash,
+} from "lucide-react"
 import Link from "next/link"
 import { cn } from "@lucci/ui/lib/utils"
 import { BookmarkPopover } from "./bookmark-popover"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@lucci/ui/components/dropdown-menu"
+import { useMutation } from "@lucci/convex/use-query"
+import { api } from "@lucci/convex/generated/api.js"
 
 const cellStyle = "border-none"
 
@@ -25,6 +43,8 @@ interface Props {
 }
 
 export function BookmarksList({ bookmarks }: Props) {
+  const deleteBookmark = useMutation(api.bookmarks.deleteBookmark)
+
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp)
     const now = new Date()
@@ -103,13 +123,36 @@ export function BookmarksList({ bookmarks }: Props) {
                           <ExternalLink className="h-4 w-4" />
                         </Link>
                       </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          <DropdownMenuItem>
+                            <Edit />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            className="text-rose-500"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              deleteBookmark({
+                                id: bookmark._id,
+                              })
+                            }}
+                          >
+                            <Trash className="text-rose-500" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </TableCell>
                 </TableRow>
