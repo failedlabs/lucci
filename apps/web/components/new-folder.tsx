@@ -15,13 +15,20 @@ import { useForm } from "@tanstack/react-form"
 import { Doc } from "@lucci/convex/generated/dataModel.js"
 import { Input } from "@lucci/ui/components/input"
 import { Textarea } from "@lucci/ui/components/textarea"
-import { useAtom, useAtomValue, useSetAtom } from "jotai"
-import { foldersAtom, showNewFolderAtom, workspaceIdAtom } from "@/lib/atoms"
+import { useAtom, useAtomValue } from "jotai"
+import { showNewFolderAtom, userIdAtom, workspaceIdAtom } from "@/lib/atoms"
+import { useMutation } from "@lucci/convex/use-query"
+import { api } from "@lucci/convex/generated/api.js"
+import { Loader2Icon } from "lucide-react"
+import { useState } from "react"
 
 export function NewFolder() {
+  const userId = useAtomValue(userIdAtom)
   const workspaceId = useAtomValue(workspaceIdAtom)
-  const setFolders = useSetAtom(foldersAtom)
   const [showNewFolder, setShowNewFolder] = useAtom(showNewFolderAtom)
+  const [loading, setLoading] = useState(false)
+
+  const createFolder = useMutation(api.folders.createFolder)
 
   const form = useForm({
     defaultValues: {
@@ -29,20 +36,30 @@ export function NewFolder() {
       notes: "",
     } satisfies Pick<Doc<"folders">, "name" | "notes">,
     onSubmit: async ({ value }) => {
-      const folder = {
-        name: value.name,
-        _id: "" as any,
-        _creationTime: 0,
-        isArchived: false,
-        isPrivate: false,
-        ownerId: "" as any,
-        workspaceId: workspaceId!,
-        notes: value.notes,
-        parentFolderId: undefined,
-      } satisfies Doc<"folders">
+      try {
+        setLoading(true)
+        const folder = {
+          name: value.name,
+          isArchived: false,
+          isPrivate: false,
+          ownerId: userId!,
+          workspaceId: workspaceId!,
+          notes: value.notes,
+          parentFolderId: undefined,
+        } satisfies Omit<Doc<"folders">, "_id" | "_creationTime">
 
-      setFolders((folders) => [...folders, folder])
-      setShowNewFolder(false)
+        await createFolder({
+          ...folder,
+        })
+
+        // setFolders((folders) => [...folders, folder])
+        setShowNewFolder(false)
+        form.reset()
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setLoading(false)
+      }
     },
   })
 
@@ -103,9 +120,14 @@ export function NewFolder() {
           </div>
 
           <DrawerFooter>
-            <Button type="submit">Submit</Button>
+            <Button type="submit" disabled={loading}>
+              {loading && <Loader2Icon className="animate-spin" />}
+              Submit
+            </Button>
             <DrawerClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline" disabled={loading}>
+                Cancel
+              </Button>
             </DrawerClose>
           </DrawerFooter>
         </form>

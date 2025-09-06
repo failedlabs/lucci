@@ -1,6 +1,7 @@
 "use client"
 
 import { searchValueAtom } from "@/lib/atoms"
+import { SignedIn, UserButton } from "@clerk/nextjs"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -37,12 +38,15 @@ export function Navbar() {
         </Breadcrumb>
       </div>
 
-      <div>
+      <div className="flex items-center gap-4">
         <Input
           placeholder="Search..."
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
         />
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
       </div>
     </nav>
   )

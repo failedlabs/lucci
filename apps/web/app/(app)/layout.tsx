@@ -6,6 +6,7 @@ import { FloatingBottomBar } from "@/components/floating-bottom-bar"
 import { NewFolder } from "@/components/new-folder"
 import { auth } from "@clerk/nextjs/server"
 import { Providers } from "@/components/providers"
+import { NewWorkspace } from "@/components/new-workspace"
 
 export default async function AppLayout({
   children,
@@ -29,6 +30,7 @@ export default async function AppLayout({
       <FloatingBottomBar />
       <NewBookmark />
       <NewFolder />
+      <NewWorkspace />
     </Providers>
   )
 }

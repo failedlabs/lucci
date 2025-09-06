@@ -1,6 +1,7 @@
 import { v } from "convex/values"
 import { mutation, query } from "./_generated/server"
 import { Id } from "./_generated/dataModel"
+import { bookmarkFields } from "./schema"
 
 export const workspaceBookmarks = query({
   args: {
@@ -15,24 +16,13 @@ export const workspaceBookmarks = query({
 })
 
 export const createBookmark = mutation({
-  args: {
-    userId: v.id("users"),
-    name: v.string(),
-    notes: v.optional(v.string()),
-    isPrivate: v.optional(v.boolean()),
-    workspaceId: v.id("workspaces"),
-    tags: v.array(v.string()),
-    url: v.string(),
-    domain: v.string(),
-    favorite: v.optional(v.boolean()),
-    folderId: v.optional(v.id("folders")),
-    metadata: v.string(),
-  },
+  args: bookmarkFields,
   handler: async (
     ctx,
     {
-      userId,
       name,
+      archived,
+      ownerId,
       notes,
       isPrivate = false,
       workspaceId,
@@ -42,27 +32,15 @@ export const createBookmark = mutation({
       favorite = false,
       folderId,
       metadata,
-    }: {
-      userId: Id<"users">
-      name: string
-      notes?: string
-      isPrivate?: boolean
-      workspaceId: Id<"workspaces">
-      domain: string
-      favorite?: boolean
-      metadata: string
-      tags: string[]
-      url: string
-      folderId?: Id<"folders">
     },
   ) => {
     const id = await ctx.db.insert("bookmarks", {
-      archived: false,
       domain,
       favorite,
       isPrivate,
       metadata,
-      ownerId: userId,
+      ownerId,
+      archived,
       tags,
       name,
       url,
@@ -130,7 +108,7 @@ export const updateBookmark = mutation({
   },
 })
 
-export const deleteFolder = mutation({
+export const deleteBookmark = mutation({
   args: {
     id: v.id("bookmarks"),
   },

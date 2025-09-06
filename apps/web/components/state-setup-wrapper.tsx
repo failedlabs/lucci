@@ -3,38 +3,67 @@
 import {
   bookmarksAtom,
   foldersAtom,
+  userClerkIdAtom,
   userIdAtom,
   workspaceIdAtom,
   workspacesAtom,
 } from "@/lib/atoms"
 import { bookmarksMock, foldersMock, workspacesMock } from "@/mocks"
-import { useSetAtom } from "jotai"
+import { api } from "@lucci/convex/generated/api.js"
+import { Id } from "@lucci/convex/generated/dataModel.js"
+import { useQuery } from "@lucci/convex/use-query"
+import { useAtom, useSetAtom } from "jotai"
 import { useEffect } from "react"
 
 export function StateSetupWrapper({
   children,
-  userId,
+  userId: userClerkId,
 }: Readonly<{
   children: React.ReactNode
   userId: string
 }>) {
+  const [workspaceId, setWorkspaceId] = useAtom(workspaceIdAtom)
+  const setUserClerkId = useSetAtom(userClerkIdAtom)
   const setUserId = useSetAtom(userIdAtom)
   const setWorkspaces = useSetAtom(workspacesAtom)
   const setBookmarks = useSetAtom(bookmarksAtom)
   const setFolders = useSetAtom(foldersAtom)
-  const setWorkspaceId = useSetAtom(workspaceIdAtom)
+
+  const user = useQuery(api.users.currentUser)
+  const workspaces = useQuery(api.workspaces.userWorkspaces)
+  const folders = useQuery(
+    api.folders.workspaceFolders,
+    workspaceId ? { id: workspaceId } : "skip",
+  )
+  const bookmarks = useQuery(
+    api.bookmarks.workspaceBookmarks,
+    workspaceId ? { id: workspaceId } : "skip",
+  )
 
   useEffect(() => {
-    setUserId(userId)
-  }, [userId])
+    setUserClerkId(userClerkId)
+  }, [userClerkId])
 
   useEffect(() => {
-    setWorkspaces(workspacesMock)
-    setBookmarks(bookmarksMock)
-    setFolders(foldersMock)
+    if (user) {
+      setUserId(user._id)
+    }
 
-    setWorkspaceId(workspacesMock[0]!._id)
-  }, [])
+    if (workspaces) {
+      setWorkspaces(workspaces)
+      if (workspaces.length > 0) {
+        setWorkspaceId(workspaces[0]!._id)
+      }
+    }
+
+    if (folders) {
+      setFolders(folders)
+    }
+
+    if (bookmarks) {
+      setBookmarks(bookmarks)
+    }
+  }, [user, workspaces, folders, bookmarks])
 
   return children
 }

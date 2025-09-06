@@ -7,41 +7,39 @@ import {
 } from "./_generated/server"
 import { UserJSON } from "@clerk/backend"
 import { Doc, Id } from "./_generated/dataModel"
+import { getCurrentUser } from "./users"
+import { workspaceFields } from "./schema"
 
 export const userWorkspaces = query({
-  args: {
-    id: v.id("users"),
-  },
-  handler: async (ctx, { id }: { id: Id<"users"> }) => {
+  args: {},
+  handler: async (ctx) => {
+    const user = await getCurrentUser(ctx)
+    if (!user) {
+      return []
+    }
+
     return await ctx.db
       .query("workspaces")
 
-      // @ts-expect-error Error with convex library, TODO: solve this later
-      .withIndex("by_member", (q) => q.eq("members", id))
+      .withIndex("by_owner", (q) => q.eq("ownerId", user!._id))
       .collect()
   },
 })
 
 export const createWorkspace = mutation({
-  args: {
-    userId: v.string(),
-    name: v.string(),
-    notes: v.optional(v.string()),
-  },
+  args: workspaceFields,
   handler: async (
     ctx,
-    {
-      userId,
-      name,
-      notes,
-    }: { userId: Id<"users">; name: string; notes?: string },
+    { ownerId, name, notes, background, icon, members, userDefault },
   ) => {
     const id = await ctx.db.insert("workspaces", {
-      members: [userId],
-      ownerId: userId,
+      members,
+      background,
+      icon,
+      ownerId,
       name,
       notes,
-      userDefault: false,
+      userDefault,
     })
 
     return id
@@ -106,6 +104,8 @@ export const createUserDefaultWorkspace = internalMutation({
     await ctx.db.insert("workspaces", {
       members: [id],
       name: `${clerkUser.first_name}'s Workspace`,
+      background: "bg-emerald-500",
+      icon: "🚀",
       ownerId: id,
       userDefault: true,
     })
