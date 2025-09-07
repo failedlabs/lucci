@@ -66,12 +66,12 @@ export function BookmarkPopover({ bookmark, metadata }: Props) {
           id: _id,
         })
         form.reset()
-        toast.success('Bookmark saved', {
-          description: `Changes to ${newBookmark.name} were saved`
+        toast.success("Bookmark saved", {
+          description: `Changes to ${newBookmark.name} were saved`,
         })
       } catch (error) {
-        toast.error('Error while saving bookmark', {
-          description: JSON.stringify(error)
+        toast.error("Error while saving bookmark", {
+          description: JSON.stringify(error),
         })
       } finally {
         setEdit(false)

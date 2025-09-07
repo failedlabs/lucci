@@ -52,15 +52,15 @@ export function NewFolder() {
         await createFolder({
           ...folder,
         })
-        
+
         setShowNewFolder(false)
         form.reset()
-        toast.success('Folder added', {
-          description: `${folder.name} added to your collection`
+        toast.success("Folder added", {
+          description: `${folder.name} added to your collection`,
         })
       } catch (error) {
-        toast.error('Error while adding folder', {
-          description: JSON.stringify(error)
+        toast.error("Error while adding folder", {
+          description: JSON.stringify(error),
         })
       } finally {
         setLoading(false)
