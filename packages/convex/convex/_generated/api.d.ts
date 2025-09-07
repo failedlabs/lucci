@@ -12,12 +12,12 @@ import type {
   ApiFromModules,
   FilterApi,
   FunctionReference,
-} from "convex/server";
-import type * as bookmarks from "../bookmarks.js";
-import type * as folders from "../folders.js";
-import type * as http from "../http.js";
-import type * as users from "../users.js";
-import type * as workspaces from "../workspaces.js";
+} from "convex/server"
+import type * as bookmarks from "../bookmarks.js"
+import type * as folders from "../folders.js"
+import type * as http from "../http.js"
+import type * as users from "../users.js"
+import type * as workspaces from "../workspaces.js"
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -28,17 +28,17 @@ import type * as workspaces from "../workspaces.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  bookmarks: typeof bookmarks;
-  folders: typeof folders;
-  http: typeof http;
-  users: typeof users;
-  workspaces: typeof workspaces;
-}>;
+  bookmarks: typeof bookmarks
+  folders: typeof folders
+  http: typeof http
+  users: typeof users
+  workspaces: typeof workspaces
+}>
 export declare const api: FilterApi<
   typeof fullApi,
   FunctionReference<any, "public">
->;
+>
 export declare const internal: FilterApi<
   typeof fullApi,
   FunctionReference<any, "internal">
->;
+>

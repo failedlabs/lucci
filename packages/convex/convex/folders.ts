@@ -44,41 +44,12 @@ export const createFolder = mutation({
 })
 
 export const updateFolder = mutation({
-  args: {
-    userId: v.id("users"),
-    name: v.string(),
-    notes: v.optional(v.string()),
-    isPrivate: v.optional(v.boolean()),
-    isArchived: v.optional(v.boolean()),
-    folderId: v.id("folders"),
-    parentFolderId: v.optional(v.id("folders")),
-  },
-  handler: async (
-    ctx,
-    {
-      name,
-      notes,
-      isPrivate = false,
-      folderId,
-      parentFolderId,
-      isArchived = false,
-    }: {
-      folderId: Id<"folders">
-      userId: Id<"users">
-      name: string
-      notes?: string
-      parentFolderId?: Id<"folders">
-      isPrivate?: boolean
-      isArchived?: boolean
-    },
-  ) => {
-    await ctx.db.patch(folderId, {
-      name,
-      isArchived,
-      isPrivate,
-      notes,
-      parentFolderId,
-    })
+  args: v.object({
+    id: v.id("folders"),
+    values: v.object(foldersFields),
+  }),
+  handler: async (ctx, { id, values }) => {
+    await ctx.db.patch(id, values)
   },
 })
 

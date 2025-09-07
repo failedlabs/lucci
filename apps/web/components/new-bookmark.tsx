@@ -65,7 +65,7 @@ export function NewBookmark() {
         }
 
         const bookmark = {
-          name: value.name === "" ? metadata.title || "" : value.name,
+          name: value.name === "" ? metadata.title || url.hostname : value.name,
           url: value.url,
           domain: url.hostname,
           favorite: false,

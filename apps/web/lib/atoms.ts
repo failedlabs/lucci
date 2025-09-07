@@ -7,6 +7,7 @@ export const userClerkIdAtom = atom<string | null>("")
 export const showNewBookmarkAtom = atom<boolean>(false)
 export const showNewFolderAtom = atom<boolean>(false)
 export const showNewWorkspaceAtom = atom<boolean>(false)
+export const showEditWorkspaceAtom = atom<boolean>(false)
 
 export const workspacesAtom = atom<Doc<"workspaces">[]>([])
 export const foldersAtom = atom<Doc<"folders">[]>([])
