@@ -21,6 +21,7 @@ import { useMutation } from "@lucci/convex/use-query"
 import { api } from "@lucci/convex/generated/api.js"
 import { Loader2Icon } from "lucide-react"
 import { useState } from "react"
+import { toast } from "@lucci/ui/components/sonner"
 
 export function NewFolder() {
   const userId = useAtomValue(userIdAtom)
@@ -51,12 +52,16 @@ export function NewFolder() {
         await createFolder({
           ...folder,
         })
-
-        // setFolders((folders) => [...folders, folder])
+        
         setShowNewFolder(false)
         form.reset()
+        toast.success('Folder added', {
+          description: `${folder.name} added to your collection`
+        })
       } catch (error) {
-        console.log(error)
+        toast.error('Error while adding folder', {
+          description: JSON.stringify(error)
+        })
       } finally {
         setLoading(false)
       }
