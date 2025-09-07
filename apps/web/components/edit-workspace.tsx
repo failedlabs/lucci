@@ -4,7 +4,6 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
@@ -12,30 +11,18 @@ import {
 import { Button } from "@lucci/ui/components/button"
 import { Label } from "@lucci/ui/components/label"
 import { useForm } from "@tanstack/react-form"
-import { Doc } from "@lucci/convex/generated/dataModel.js"
 import { Input } from "@lucci/ui/components/input"
 import { useAtom, useAtomValue } from "jotai"
-import {
-  selectedWorkspaceAtom,
-  showEditWorkspaceAtom,
-  userIdAtom,
-  workspaceIdAtom,
-} from "@/lib/atoms"
+import { selectedWorkspaceAtom, showEditWorkspaceAtom } from "@/lib/atoms"
 import { useMutation } from "@lucci/convex/use-query"
 import { api } from "@lucci/convex/generated/api.js"
-import { useState } from "react"
-import {
-  Check,
-  Copy,
-  LinkIcon,
-  Loader2,
-  Loader2Icon,
-  Trash,
-  Users,
-} from "lucide-react"
+import { useEffect, useState } from "react"
+import { Loader2Icon, Trash } from "lucide-react"
 import { Textarea } from "@lucci/ui/components/textarea"
 import { Separator } from "@lucci/ui/components/separator"
 import { toast } from "@lucci/ui/components/sonner"
+import { BgColorSelector } from "./bg-color-selector"
+import { IconSelector } from "./icon-selector"
 
 export function EditWorkspace() {
   const [showEditWorkspace, setShowEditWorkspace] = useAtom(
@@ -43,16 +30,23 @@ export function EditWorkspace() {
   )
   const [loading, setLoading] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [icon, setIcon] = useState("")
+  const [background, setBackground] = useState("")
   const workspace = useAtomValue(selectedWorkspaceAtom)
 
   const updateWorkspace = useMutation(api.workspaces.updateWorkspace)
+
+  useEffect(() => {
+    if (workspace) {
+      setIcon(workspace.icon)
+      setBackground(workspace.background)
+    }
+  }, [workspace])
 
   const form = useForm({
     defaultValues: {
       name: workspace?.name,
       notes: workspace?.notes || "",
-      icon: workspace?.icon,
-      background: workspace?.background,
     },
     onSubmit: async ({ value }) => {
       try {
@@ -63,19 +57,19 @@ export function EditWorkspace() {
           ...current,
           name: value.name || workspace!.name,
           notes: value.notes || workspace!.notes,
-          icon: value.icon || workspace!.icon,
-          background: value.background || workspace!.background,
+          icon: icon || workspace!.icon,
+          background: background || workspace!.background,
         }
         await updateWorkspace({
           id: _id,
           values: newWorkspace,
         })
-        toast.success('Workspace saved', {
-          description: `Changes to ${newWorkspace.name} were saved`
+        toast.success("Workspace saved", {
+          description: `Changes to ${newWorkspace.name} were saved`,
         })
       } catch (error) {
-        toast.error('Error while adding workspace', {
-          description: JSON.stringify(error)
+        toast.error("Error while adding workspace", {
+          description: JSON.stringify(error),
         })
       } finally {
         setLoading(false)
@@ -114,18 +108,14 @@ export function EditWorkspace() {
 
           <div className="space-y-4 p-4 pb-0 pt-1">
             <div className="flex items-center justify-center">
-              <Button
-                variant={"ghost"}
-                type="button"
-                className="bg-muted h-12 w-12 text-xl"
-              >
-                {form.getFieldValue("icon")}
-              </Button>
+              <IconSelector icon={icon} setIcon={(xd) => setIcon(xd)} />
             </div>
             <div className="flex items-end gap-2">
-              <Button
-                type="button"
-                className={form.getFieldValue("background")}
+              <BgColorSelector
+                color={background}
+                setColor={(color) => {
+                  setBackground(color)
+                }}
               />
               <form.Field
                 name="name"

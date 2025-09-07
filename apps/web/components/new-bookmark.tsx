@@ -86,12 +86,12 @@ export function NewBookmark() {
         form.reset()
         setShowNewBookmark(false)
 
-        toast.success('Bookmark added', {
-          description: `${bookmark.name} added to your collection`
+        toast.success("Bookmark added", {
+          description: `${bookmark.name} added to your collection`,
         })
       } catch (error) {
-        toast.error('Error while adding bookmark', {
-          description: JSON.stringify(error)
+        toast.error("Error while adding bookmark", {
+          description: JSON.stringify(error),
         })
       } finally {
         setLoading(false)

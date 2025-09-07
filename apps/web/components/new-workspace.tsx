@@ -21,26 +21,32 @@ import { api } from "@lucci/convex/generated/api.js"
 import { useState } from "react"
 import { Loader2Icon } from "lucide-react"
 import { toast } from "@lucci/ui/components/sonner"
+import { BG_COLORS, BgColorSelector } from "./bg-color-selector"
+import { ICONS, IconSelector } from "./icon-selector"
 
 export function NewWorkspace() {
   const userId = useAtomValue(userIdAtom)
   const [showNewWorkspace, setShowNewWorkspace] = useAtom(showNewWorkspaceAtom)
   const [loading, setLoading] = useState(false)
+  const [icon, setIcon] = useState(
+    ICONS[Math.floor(Math.random() * ICONS.length)]!,
+  )
+  const [background, setBackground] = useState(
+    BG_COLORS[Math.floor(Math.random() * BG_COLORS.length)]!,
+  )
 
   const createWorkspace = useMutation(api.workspaces.createWorkspace)
 
   const form = useForm({
     defaultValues: {
       name: "",
-      icon: "💩",
-      background: "bg-rose-500",
-    } satisfies Pick<Doc<"workspaces">, "name" | "icon" | "background">,
+    } satisfies Pick<Doc<"workspaces">, "name">,
     onSubmit: async ({ value }) => {
       try {
         setLoading(true)
         const workspace = {
-          background: value.background,
-          icon: value.icon,
+          background: background,
+          icon: icon,
           members: [userId!],
           name: value.name,
           ownerId: userId!,
@@ -53,12 +59,12 @@ export function NewWorkspace() {
 
         setShowNewWorkspace(false)
         form.reset()
-        toast.success('Folder added', {
-          description: `${workspace.name} added to your collection`
+        toast.success("Workspace added", {
+          description: `${workspace.name} added to your collection`,
         })
       } catch (error) {
-        toast.error('Error while adding workspace', {
-          description: JSON.stringify(error)
+        toast.error("Error while adding workspace", {
+          description: JSON.stringify(error),
         })
       } finally {
         setLoading(false)
@@ -88,18 +94,14 @@ export function NewWorkspace() {
 
           <div className="space-y-4 p-4 pb-0">
             <div className="flex items-center justify-center">
-              <Button
-                variant={"ghost"}
-                type="button"
-                className="bg-muted h-12 w-12 text-xl"
-              >
-                {form.getFieldValue("icon")}
-              </Button>
+              <IconSelector icon={icon} setIcon={(xd) => setIcon(xd)} />
             </div>
             <div className="flex items-end gap-2">
-              <Button
-                type="button"
-                className={form.getFieldValue("background")}
+              <BgColorSelector
+                color={background}
+                setColor={(color) => {
+                  setBackground(color)
+                }}
               />
               <form.Field
                 name="name"
