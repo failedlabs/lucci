@@ -13,18 +13,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@lucci/ui/components/dropdown-menu"
-import { ChevronsUpDown, Plus } from "lucide-react"
+import { ChevronsUpDown, Plus, Settings } from "lucide-react"
 import { WorkspaceCard } from "./workspace-card"
 import { useAtomValue, useSetAtom } from "jotai"
 import {
   selectedWorkspaceAtom,
+  showEditWorkspaceAtom,
   showNewWorkspaceAtom,
   workspaceIdAtom,
   workspacesAtom,
 } from "@/lib/atoms"
+import { Button } from "@lucci/ui/components/button"
 
 export function NavWorkspace() {
   const setShowNewWorkspace = useSetAtom(showNewWorkspaceAtom)
+  const setShowEditWorkspace = useSetAtom(showEditWorkspaceAtom)
   const setWorkspaceId = useSetAtom(workspaceIdAtom)
   const workspaces = useAtomValue(workspacesAtom)
   const workspace = useAtomValue(selectedWorkspaceAtom)
@@ -49,8 +52,17 @@ export function NavWorkspace() {
             align="end"
             sideOffset={4}
           >
-            <DropdownMenuLabel className="p-0 px-2 font-normal">
+            <DropdownMenuLabel className="flex items-center justify-between p-0 px-2 font-normal">
               <WorkspaceCard workspace={workspace} />
+              <Button
+                size={"icon"}
+                variant={"ghost"}
+                onClick={() => {
+                  setShowEditWorkspace(true)
+                }}
+              >
+                <Settings />
+              </Button>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>

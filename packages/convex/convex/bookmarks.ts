@@ -55,56 +55,11 @@ export const createBookmark = mutation({
 
 export const updateBookmark = mutation({
   args: {
-    name: v.string(),
-    notes: v.optional(v.string()),
-    isPrivate: v.optional(v.boolean()),
-    bookmarkId: v.id("bookmarks"),
-    workspaceId: v.id("workspaces"),
-    tags: v.array(v.string()),
-    url: v.string(),
-    domain: v.string(),
-    favorite: v.optional(v.boolean()),
-    folderId: v.optional(v.id("folders")),
-    metadata: v.string(),
+    id: v.id("bookmarks"),
+    values: v.object(bookmarkFields),
   },
-  handler: async (
-    ctx,
-    {
-      bookmarkId,
-      name,
-      notes,
-      isPrivate = false,
-      tags,
-      url,
-      domain,
-      favorite = false,
-      folderId,
-      metadata,
-    }: {
-      bookmarkId: Id<"bookmarks">
-      name: string
-      notes?: string
-      isPrivate?: boolean
-      domain: string
-      favorite?: boolean
-      metadata: string
-      tags: string[]
-      url: string
-      folderId?: Id<"folders">
-    },
-  ) => {
-    await ctx.db.patch(bookmarkId, {
-      archived: false,
-      domain,
-      favorite,
-      isPrivate,
-      metadata,
-      tags,
-      name,
-      url,
-      folderId,
-      notes,
-    })
+  handler: async (ctx, { id, values }) => {
+    await ctx.db.patch(id, values)
   },
 })
 

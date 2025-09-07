@@ -47,31 +47,12 @@ export const createWorkspace = mutation({
 })
 
 export const updateWorkspace = mutation({
-  args: {
+  args: v.object({
     id: v.id("workspaces"),
-    members: v.optional(v.array(v.id("users"))),
-    name: v.optional(v.string()),
-    notes: v.optional(v.string()),
-  },
-  handler: async (
-    ctx,
-    {
-      id: workspaceId,
-      name,
-      notes,
-      members,
-    }: {
-      id: Id<"workspaces">
-      name?: string
-      notes?: string
-      members?: Id<"users">[]
-    },
-  ) => {
-    await ctx.db.patch(workspaceId, {
-      name,
-      notes,
-      members,
-    })
+    values: v.object(workspaceFields),
+  }),
+  handler: async (ctx, { id, values }) => {
+    await ctx.db.patch(id, values)
   },
 })
 

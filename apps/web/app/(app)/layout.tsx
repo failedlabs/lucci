@@ -7,6 +7,7 @@ import { NewFolder } from "@/components/new-folder"
 import { auth } from "@clerk/nextjs/server"
 import { Providers } from "@/components/providers"
 import { NewWorkspace } from "@/components/new-workspace"
+import { EditWorkspace } from "@/components/edit-workspace"
 
 export default async function AppLayout({
   children,
@@ -31,6 +32,7 @@ export default async function AppLayout({
       <NewBookmark />
       <NewFolder />
       <NewWorkspace />
+      <EditWorkspace />
     </Providers>
   )
 }
