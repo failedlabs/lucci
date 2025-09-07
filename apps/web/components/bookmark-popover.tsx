@@ -6,6 +6,7 @@ import { Button } from "@lucci/ui/components/button"
 import { Input } from "@lucci/ui/components/input"
 import { Label } from "@lucci/ui/components/label"
 import { Separator } from "@lucci/ui/components/separator"
+import { toast } from "@lucci/ui/components/sonner"
 import { Textarea } from "@lucci/ui/components/textarea"
 import { cn } from "@lucci/ui/lib/utils"
 import { useForm } from "@tanstack/react-form"
@@ -65,8 +66,13 @@ export function BookmarkPopover({ bookmark, metadata }: Props) {
           id: _id,
         })
         form.reset()
+        toast.success('Bookmark saved', {
+          description: `Changes to ${newBookmark.name} were saved`
+        })
       } catch (error) {
-        console.log(error)
+        toast.error('Error while saving bookmark', {
+          description: JSON.stringify(error)
+        })
       } finally {
         setEdit(false)
         setLoading(false)

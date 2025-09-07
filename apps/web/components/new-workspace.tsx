@@ -20,6 +20,7 @@ import { useMutation } from "@lucci/convex/use-query"
 import { api } from "@lucci/convex/generated/api.js"
 import { useState } from "react"
 import { Loader2Icon } from "lucide-react"
+import { toast } from "@lucci/ui/components/sonner"
 
 export function NewWorkspace() {
   const userId = useAtomValue(userIdAtom)
@@ -52,8 +53,13 @@ export function NewWorkspace() {
 
         setShowNewWorkspace(false)
         form.reset()
+        toast.success('Folder added', {
+          description: `${workspace.name} added to your collection`
+        })
       } catch (error) {
-        console.log(error)
+        toast.error('Error while adding workspace', {
+          description: JSON.stringify(error)
+        })
       } finally {
         setLoading(false)
       }

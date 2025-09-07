@@ -35,6 +35,7 @@ import {
 } from "lucide-react"
 import { Textarea } from "@lucci/ui/components/textarea"
 import { Separator } from "@lucci/ui/components/separator"
+import { toast } from "@lucci/ui/components/sonner"
 
 export function EditWorkspace() {
   const [showEditWorkspace, setShowEditWorkspace] = useAtom(
@@ -57,19 +58,25 @@ export function EditWorkspace() {
       try {
         setLoading(true)
         const { _id, _creationTime, ...current } = workspace!
+
+        const newWorkspace = {
+          ...current,
+          name: value.name || workspace!.name,
+          notes: value.notes || workspace!.notes,
+          icon: value.icon || workspace!.icon,
+          background: value.background || workspace!.background,
+        }
         await updateWorkspace({
           id: _id,
-          values: {
-            ...current,
-            name: value.name || workspace!.name,
-            notes: value.notes || workspace!.notes,
-            icon: value.icon || workspace!.icon,
-            background: value.background || workspace!.background,
-          },
+          values: newWorkspace,
         })
-        console.log("Workspace updated successfully!")
+        toast.success('Workspace saved', {
+          description: `Changes to ${newWorkspace.name} were saved`
+        })
       } catch (error) {
-        console.error("Error updating workspace:", error)
+        toast.error('Error while adding workspace', {
+          description: JSON.stringify(error)
+        })
       } finally {
         setLoading(false)
       }

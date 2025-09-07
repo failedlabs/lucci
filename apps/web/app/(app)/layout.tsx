@@ -8,6 +8,7 @@ import { auth } from "@clerk/nextjs/server"
 import { Providers } from "@/components/providers"
 import { NewWorkspace } from "@/components/new-workspace"
 import { EditWorkspace } from "@/components/edit-workspace"
+import { Toaster } from "@lucci/ui/components/sonner"
 
 export default async function AppLayout({
   children,
@@ -33,6 +34,8 @@ export default async function AppLayout({
       <NewFolder />
       <NewWorkspace />
       <EditWorkspace />
+
+      <Toaster />
     </Providers>
   )
 }

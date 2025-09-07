@@ -27,6 +27,7 @@ import { api } from "@lucci/convex/generated/api.js"
 import { fetchMetadata } from "@/app/fetch-metadata"
 import { useState } from "react"
 import { Loader2Icon } from "lucide-react"
+import { toast } from "@lucci/ui/components/sonner"
 
 function UrlFieldInfo({ field }: { field: AnyFieldApi }) {
   return (
@@ -82,13 +83,16 @@ export function NewBookmark() {
         await createBookmark({
           ...bookmark,
         })
-        // bookmark._id = id
-
-        // setBookmarks((bookmarks) => [...bookmarks, bookmark])
         form.reset()
         setShowNewBookmark(false)
+
+        toast.success('Bookmark added', {
+          description: `${bookmark.name} added to your collection`
+        })
       } catch (error) {
-        console.log(error)
+        toast.error('Error while adding bookmark', {
+          description: JSON.stringify(error)
+        })
       } finally {
         setLoading(false)
       }
