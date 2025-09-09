@@ -63,6 +63,16 @@ export const updateBookmark = mutation({
   },
 })
 
+export const moveBookmarkToFolder = mutation({
+  args: {
+    id: v.id("bookmarks"),
+    folderId: v.optional(v.id("folders")),
+  },
+  handler: async (ctx, { id, folderId }) => {
+    await ctx.db.patch(id, { folderId })
+  },
+})
+
 export const deleteBookmark = mutation({
   args: {
     id: v.id("bookmarks"),
