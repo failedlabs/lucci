@@ -29,12 +29,12 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@lucci/ui/components/dropdown-menu"
 import { useMutation } from "@lucci/convex/use-query"
 import { api } from "@lucci/convex/generated/api.js"
+import { useState } from "react"
 
 const cellStyle = "border-none"
 
@@ -44,6 +44,9 @@ interface Props {
 
 export function BookmarksList({ bookmarks }: Props) {
   const deleteBookmark = useMutation(api.bookmarks.deleteBookmark)
+  const [draggedBookmarkId, setDraggedBookmarkId] = useState<string | null>(
+    null,
+  )
 
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp)
@@ -66,6 +69,16 @@ export function BookmarksList({ bookmarks }: Props) {
     }
   }
 
+  const handleDragStart = (e: React.DragEvent, bookmarkId: string) => {
+    setDraggedBookmarkId(bookmarkId)
+    e.dataTransfer.setData("text/plain", bookmarkId)
+    e.dataTransfer.effectAllowed = "move"
+  }
+
+  const handleDragEnd = () => {
+    setDraggedBookmarkId(null)
+  }
+
   return (
     <Table>
       <TableBody>
@@ -74,7 +87,20 @@ export function BookmarksList({ bookmarks }: Props) {
           return (
             <Popover key={bookmark._id}>
               <PopoverTrigger asChild>
-                <TableRow className="hover:bg-muted/50 cursor-pointer border-none">
+                <TableRow
+                  className={cn(
+                    "hover:bg-muted/50 cursor-pointer border-none transition-colors",
+                    draggedBookmarkId === bookmark._id &&
+                      "cursor-grabbing opacity-50",
+                  )}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, bookmark._id)}
+                  onDragEnd={handleDragEnd}
+                  style={{
+                    cursor:
+                      draggedBookmarkId === bookmark._id ? "grabbing" : "grab",
+                  }}
+                >
                   <TableCell className={cn(cellStyle, "pl-5")}>
                     <div className="flex items-center gap-3">
                       <div>

@@ -53,6 +53,16 @@ export const updateFolder = mutation({
   },
 })
 
+export const moveFolderToParent = mutation({
+  args: {
+    id: v.id("folders"),
+    parentFolderId: v.optional(v.id("folders")),
+  },
+  handler: async (ctx, { id, parentFolderId }) => {
+    await ctx.db.patch(id, { parentFolderId })
+  },
+})
+
 export const deleteFolder = mutation({
   args: {
     id: v.id("folders"),
