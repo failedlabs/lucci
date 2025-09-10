@@ -1,25 +1,14 @@
 "use client"
 
-import { searchValueAtom } from "@/lib/atoms"
 import { SignedIn, UserButton } from "@clerk/nextjs"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@lucci/ui/components/breadcrumb"
-import { Input } from "@lucci/ui/components/input"
 import { SidebarTrigger } from "@lucci/ui/components/sidebar"
-import { useAtom } from "jotai"
 import { useEffect, useState } from "react"
 import { CommandBar } from "./command-bar"
 import { Button } from "@lucci/ui/components/button"
 import { Search } from "lucide-react"
+import { AppBreadcrumbs } from "./app-breadcrumbs"
 
 export function Navbar() {
-  const [searchValue, setSearchValue] = useAtom(searchValueAtom)
   const [openCommand, setOpenCommand] = useState(false)
 
   useEffect(() => {
@@ -38,21 +27,7 @@ export function Navbar() {
     <nav className="bg-background/50 absolute flex w-full items-center justify-between p-4 backdrop-blur-md">
       <div className="flex items-center gap-2">
         <SidebarTrigger />
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/components">Components</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
+        <AppBreadcrumbs />
       </div>
 
       <div className="flex items-center gap-4">

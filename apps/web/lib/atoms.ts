@@ -15,12 +15,43 @@ export const bookmarksAtom = atom<Doc<"bookmarks">[]>([])
 
 export const workspaceIdAtom = atom<Id<"workspaces"> | null>(null)
 export const folderIdAtom = atom<Id<"folders"> | null>(null)
-export const searchValueAtom = atom<string>("")
 
 export const filteredBookmarksAtom = atom<Doc<"bookmarks">[]>((get) => {
   return get(bookmarksAtom).filter(
     (bookmark) => bookmark.workspaceId === get(workspaceIdAtom),
   )
+})
+
+export const currentFolderAtom = atom<Doc<"folders"> | null>((get) => {
+  if (!get(folderIdAtom)) {
+    return null
+  }
+
+  return get(foldersAtom).find((fl) => fl._id === get(folderIdAtom))!
+})
+
+export const currentFolderParentsAtom = atom<Doc<"folders">[] | null>((get) => {
+  if (!get(currentFolderAtom)) {
+    return null
+  }
+  const folders = get(foldersAtom)
+  const current = get(currentFolderAtom)!
+
+  const idToFolder = new Map<string, Doc<"folders">>()
+  for (const folder of folders) {
+    idToFolder.set(folder._id, folder)
+  }
+
+  const chain: Doc<"folders">[] = []
+  let cursor: Doc<"folders"> | undefined = current
+
+  while (cursor) {
+    chain.push(cursor)
+    if (!cursor.parentFolderId) break
+    cursor = idToFolder.get(cursor.parentFolderId)
+  }
+
+  return chain.filter((fl) => fl._id !== current._id)
 })
 
 export const selectedWorkspaceAtom = atom<Doc<"workspaces"> | null>((get) => {
