@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 import "@lucci/ui/globals.css"
 import { ClerkProvider } from "@clerk/nextjs"
 import ConvexClientProvider from "@/components/convex-provider"
+import { shadcn } from "@clerk/themes"
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -20,7 +21,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        theme: shadcn,
+      }}
+    >
       <ConvexClientProvider>
         <html lang="en" suppressHydrationWarning>
           <body

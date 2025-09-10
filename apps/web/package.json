@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.31.4",
+    "@clerk/themes": "^2.4.18",
     "@lucci/convex": "workspace:*",
     "@lucci/ui": "workspace:*",
     "@tanstack/react-form": "^1.19.3",
