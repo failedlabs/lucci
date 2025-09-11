@@ -21,6 +21,7 @@ import { NavWorkspace } from "./nav-workspace"
 import { useAtom, useAtomValue, useSetAtom } from "jotai"
 import {
   expandedFoldersAtom,
+  folderIdAtom,
   foldersTreeAtom,
   showNewBookmarkAtom,
   showNewFolderAtom,
@@ -46,6 +47,7 @@ const items = [
 export function AppSidebar() {
   const setShowNewBookmark = useSetAtom(showNewBookmarkAtom)
   const setShowNewFolder = useSetAtom(showNewFolderAtom)
+  const setFolderId = useSetAtom(folderIdAtom)
   const [expandedFolders, setExpandedFolders] = useAtom(expandedFoldersAtom)
   const [isFolderDragging, setIsFolderDragging] = useState(false)
   const folderTree = useAtomValue(foldersTreeAtom)
@@ -122,7 +124,7 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <Link href={item.url}>
+                    <Link href={item.url} onClick={() => setFolderId(null)}>
                       <item.icon />
                       <span>{item.title}</span>
                     </Link>
