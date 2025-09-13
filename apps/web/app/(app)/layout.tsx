@@ -9,6 +9,7 @@ import { Providers } from "@/components/providers"
 import { NewWorkspace } from "@/components/new-workspace"
 import { EditWorkspace } from "@/components/edit-workspace"
 import { Toaster } from "@lucci/ui/components/sonner"
+import { AppSection } from "@/components/app-section"
 
 export default async function AppLayout({
   children,
@@ -26,7 +27,14 @@ export default async function AppLayout({
       <AppSidebar />
       <SidebarInset>
         <Navbar />
-        <div className="mt-20">{children}</div>
+        <div className="relative mt-20 flex">
+          <div className="flex-1">{children}</div>
+          <div className="w-full max-w-md" />
+
+          <section className="absolute right-0 h-[calc(100vh_-_90px)] w-full max-w-md p-3">
+            <AppSection />
+          </section>
+        </div>
       </SidebarInset>
 
       <FloatingBottomBar />
