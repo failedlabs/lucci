@@ -4,6 +4,7 @@ import "@lucci/ui/globals.css"
 import { ClerkProvider } from "@clerk/nextjs"
 import ConvexClientProvider from "@/components/convex-provider"
 import { shadcn } from "@clerk/themes"
+import { ThemeProvider as NextThemesProvider } from "next-themes"
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -31,7 +32,15 @@ export default function RootLayout({
           <body
             className={`${fontSans.variable} ${fontMono.variable} min-h-svh font-sans antialiased`}
           >
-            {children}
+            <NextThemesProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+              enableColorScheme
+            >
+              {children}
+            </NextThemesProvider>
           </body>
         </html>
       </ConvexClientProvider>
