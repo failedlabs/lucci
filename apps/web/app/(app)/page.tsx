@@ -7,7 +7,7 @@ import { useAtomValue } from "jotai"
 
 export default function Page() {
   const filteredBookmarks = useAtomValue(filteredBookmarksAtom)
-  const bookmarks = filteredBookmarks.filter((bookmark) => bookmark.favorite)
+  const bookmarks = filteredBookmarks.filter((bookmark) => !bookmark.folderId)
 
   if (!bookmarks || bookmarks.length === 0) {
     return (

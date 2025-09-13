@@ -8,7 +8,7 @@ const USER_AGENT = "metadata-fetcher/1.0 (+https://example.com)"
 // Optional: whitelist to reduce SSRF risk (set to null to allow all)
 const HOST_WHITELIST: string[] | null = null // e.g. ["example.com", "youtube.com"]
 
-type MetaResult = {
+export type MetaResult = {
   title?: string
   description?: string
   image?: string // best image / og:image / twitter:image

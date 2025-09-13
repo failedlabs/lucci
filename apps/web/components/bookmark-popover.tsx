@@ -1,4 +1,4 @@
-import { fetchMetadata } from "@/app/fetch-metadata"
+import { fetchMetadata, MetaResult } from "@/app/fetch-metadata"
 import { api } from "@lucci/convex/generated/api.js"
 import { Doc } from "@lucci/convex/generated/dataModel.js"
 import { useMutation } from "@lucci/convex/use-query"
@@ -17,7 +17,6 @@ import {
   ExternalLink,
   Loader2Icon,
   Lock,
-  Save,
   Star,
   Tag,
   Trash2,
@@ -27,7 +26,7 @@ import { useState } from "react"
 
 interface Props {
   bookmark: Doc<"bookmarks">
-  metadata?: any
+  metadata?: MetaResult
 }
 
 export function BookmarkPopover({ bookmark, metadata }: Props) {
@@ -109,7 +108,7 @@ export function BookmarkPopover({ bookmark, metadata }: Props) {
   }
 
   return (
-    <div className="min-w-sm space-y-3 p-6">
+    <div className="space-y-3">
       {/* Header */}
       {edit ? (
         <div className="space-y-4">
@@ -157,7 +156,6 @@ export function BookmarkPopover({ bookmark, metadata }: Props) {
           <form.Field
             name="notes"
             children={(field) => {
-              // Avoid hasty abstractions. Render props are great!
               return (
                 <>
                   <div className="grid w-full max-w-sm items-center gap-3">
@@ -187,7 +185,7 @@ export function BookmarkPopover({ bookmark, metadata }: Props) {
               />
               <div className="space-y-1">
                 <h3 className="text-lg font-semibold">
-                  {bookmark.name || metadata.title}
+                  {bookmark.name || metadata?.title}
                 </h3>
                 <p className="text-muted-foreground text-sm">
                   {bookmark.domain}
@@ -205,20 +203,18 @@ export function BookmarkPopover({ bookmark, metadata }: Props) {
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
-                size="sm"
+                size="icon"
                 onClick={() => copyToClipboard(bookmark.url)}
               >
                 <Copy className="h-4 w-4" />
-                Copy URL
               </Button>
-              <Button variant="outline" size="sm" asChild>
+              <Button variant="outline" size="icon" asChild>
                 <Link
                   href={bookmark.url}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <ExternalLink className="h-4 w-4" />
-                  Visit
                 </Link>
               </Button>
             </div>
@@ -255,15 +251,6 @@ export function BookmarkPopover({ bookmark, metadata }: Props) {
               </div>
             </div>
           )}
-
-          {/* Metadata */}
-          {/* <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <Calendar className="text-muted-foreground h-4 w-4" />
-          <h4 className="text-muted-foreground text-sm font-medium">Created</h4>
-        </div>
-        <p className="text-sm">{formatDate(bookmark._creationTime)}</p>
-      </div> */}
         </>
       )}
 
@@ -280,22 +267,19 @@ export function BookmarkPopover({ bookmark, metadata }: Props) {
           </Button>
         ) : (
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={favorite}>
+            <Button variant="ghost" size="icon" onClick={favorite}>
               <Star
                 className={cn(
                   "h-4 w-4",
                   bookmark.favorite ? "fill-current text-yellow-500" : "",
                 )}
               />
-              {bookmark.favorite ? "Remove" : "Favorite"}
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => setEdit(true)}>
+            <Button variant="ghost" size="icon" onClick={() => setEdit(true)}>
               <Edit className="h-4 w-4" />
-              Edit
             </Button>
-            <Button variant="destructive" size="sm">
+            <Button variant="destructive" size="icon">
               <Trash2 className="h-4 w-4" />
-              Delete
             </Button>
           </div>
         )}
