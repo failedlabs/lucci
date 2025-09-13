@@ -16,6 +16,15 @@ export const bookmarkFields = {
   metadata: v.string(),
 }
 
+export const readingsFields = {
+  name: v.string(),
+  url: v.string(),
+  workspaceId: v.id("workspaces"),
+  ownerId: v.id("users"),
+  read: v.boolean(),
+  metadata: v.string(),
+}
+
 export const foldersFields = {
   name: v.string(),
   workspaceId: v.id("workspaces"),
@@ -48,6 +57,10 @@ export default defineSchema({
     .index("by_workspace_id", ["workspaceId"])
     .index("by_owner", ["ownerId"]),
   bookmarks: defineTable(bookmarkFields)
+    .index("by_workspace_id", ["workspaceId"])
+    .index("by_owner", ["ownerId"])
+    .index("by_url", ["workspaceId", "url"]),
+  readings: defineTable(readingsFields)
     .index("by_workspace_id", ["workspaceId"])
     .index("by_owner", ["ownerId"])
     .index("by_url", ["workspaceId", "url"]),
