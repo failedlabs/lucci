@@ -16,12 +16,7 @@ import { Doc } from "@lucci/convex/generated/dataModel.js"
 import { Input } from "@lucci/ui/components/input"
 import { Textarea } from "@lucci/ui/components/textarea"
 import { useAtom, useAtomValue } from "jotai"
-import {
-  folderIdAtom,
-  showNewBookmarkAtom,
-  userIdAtom,
-  workspaceIdAtom,
-} from "@/lib/atoms"
+import { showNewReadingAtom, userIdAtom, workspaceIdAtom } from "@/lib/atoms"
 import { useMutation } from "@lucci/convex/use-query"
 import { api } from "@lucci/convex/generated/api.js"
 import { fetchMetadata } from "@/app/fetch-metadata"
@@ -42,20 +37,19 @@ function UrlFieldInfo({ field }: { field: AnyFieldApi }) {
   )
 }
 
-export function NewBookmark() {
+export function NewReading() {
   const userId = useAtomValue(userIdAtom)
   const workspaceId = useAtomValue(workspaceIdAtom)
-  const folderId = useAtomValue(folderIdAtom)
-  const [showNewBookmark, setShowNewBookmark] = useAtom(showNewBookmarkAtom)
+  const [showNewReading, setShowNewReading] = useAtom(showNewReadingAtom)
 
-  const createBookmark = useMutation(api.bookmarks.createBookmark)
+  const createReading = useMutation(api.readings.createReading)
   const [loading, setLoading] = useState(false)
 
   const form = useForm({
     defaultValues: {
       name: "",
       url: "",
-    } satisfies Pick<Doc<"bookmarks">, "name" | "url">,
+    } satisfies Pick<Doc<"readings">, "name" | "url">,
     onSubmit: async ({ value }) => {
       try {
         setLoading(true)
@@ -66,32 +60,27 @@ export function NewBookmark() {
           throw Error("Error getting metadata of url")
         }
 
-        const bookmark = {
+        const reading = {
           name: value.name === "" ? metadata.title || url.hostname : value.name,
           url: value.url,
           domain: url.hostname,
-          favorite: false,
-          archived: false,
-          folderId: folderId || undefined,
-          isPrivate: false,
           metadata: JSON.stringify(metadata) as InferedMetadata,
-          notes: metadata.description || undefined,
           ownerId: userId!,
-          tags: [],
           workspaceId: workspaceId!,
-        } satisfies Omit<Doc<"bookmarks">, "_id" | "_creationTime">
+          read: false,
+        } satisfies Omit<Doc<"readings">, "_id" | "_creationTime">
 
-        await createBookmark({
-          ...bookmark,
+        await createReading({
+          ...reading,
         })
         form.reset()
-        setShowNewBookmark(false)
+        setShowNewReading(false)
 
-        toast.success("Bookmark added", {
-          description: `${bookmark.name} added to your collection`,
+        toast.success("Reading added", {
+          description: `${reading.name} added to your collection`,
         })
       } catch (error) {
-        toast.error("Error while adding bookmark", {
+        toast.error("Error while adding reading", {
           description: JSON.stringify(error),
         })
       } finally {
@@ -100,32 +89,8 @@ export function NewBookmark() {
     },
   })
 
-  function assertIsUrl(value: string): boolean {
-    const defaultScheme = "https://"
-    if (typeof value !== "string" || value.trim() === "") {
-      return false
-    }
-    const candidate = value.includes("://") ? value : `${defaultScheme}${value}`
-    let url: URL
-    try {
-      url = new URL(candidate)
-    } catch {
-      return false
-    }
-
-    if (url.protocol !== "http:" && url.protocol !== "https:") {
-      return false
-    }
-
-    if (!url.hostname) {
-      return false
-    }
-
-    return true
-  }
-
   return (
-    <Drawer open={showNewBookmark} onClose={() => setShowNewBookmark(false)}>
+    <Drawer open={showNewReading} onClose={() => setShowNewReading(false)}>
       <DrawerContent>
         <form
           className="mx-auto w-full max-w-sm"
@@ -136,9 +101,9 @@ export function NewBookmark() {
           }}
         >
           <DrawerHeader>
-            <DrawerTitle>Add a new bookmark</DrawerTitle>
+            <DrawerTitle>Add a new reading</DrawerTitle>
             <DrawerDescription>
-              When you add a new bookmark, Lucci will sync it into all your
+              When you add a new reading, Lucci will sync it into all your
               devices.
             </DrawerDescription>
           </DrawerHeader>

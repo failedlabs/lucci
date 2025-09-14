@@ -1,6 +1,7 @@
-import { fetchMetadata, MetaResult } from "@/app/fetch-metadata"
+import { fetchMetadata } from "@/app/fetch-metadata"
 import { api } from "@lucci/convex/generated/api.js"
 import { Doc } from "@lucci/convex/generated/dataModel.js"
+import { InferedMetadata } from "@lucci/convex/types"
 import { useMutation } from "@lucci/convex/use-query"
 import { Button } from "@lucci/ui/components/button"
 import { Input } from "@lucci/ui/components/input"
@@ -26,10 +27,9 @@ import { useState } from "react"
 
 interface Props {
   bookmark: Doc<"bookmarks">
-  metadata?: MetaResult
 }
 
-export function BookmarkPopover({ bookmark, metadata }: Props) {
+export function BookmarkPopover({ bookmark }: Props) {
   const [edit, setEdit] = useState(false)
   const [loading, setLoading] = useState(false)
   const mutateBookmark = useMutation(api.bookmarks.updateBookmark)
@@ -58,7 +58,7 @@ export function BookmarkPopover({ bookmark, metadata }: Props) {
           url: value.url === "" ? bookmark.url : value.url,
           domain: value.url === "" ? bookmark.domain : url.hostname,
           metadata:
-            value.url === "" ? bookmark.metadata : JSON.stringify(metadata),
+            value.url === "" ? bookmark.metadata : JSON.stringify(metadata) as InferedMetadata,
         }
         await mutateBookmark({
           values: newBookmark,
@@ -185,7 +185,7 @@ export function BookmarkPopover({ bookmark, metadata }: Props) {
               />
               <div className="space-y-1">
                 <h3 className="text-lg font-semibold">
-                  {bookmark.name || metadata?.title}
+                  {bookmark.name || bookmark.metadata?.title}
                 </h3>
                 <p className="text-muted-foreground text-sm">
                   {bookmark.domain}

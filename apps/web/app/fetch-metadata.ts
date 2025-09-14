@@ -1,21 +1,12 @@
 "use server"
 
 import * as cheerio from "cheerio"
+import { Metadata } from "@lucci/convex/types"
 
 const FETCH_TIMEOUT = 8000 // ms
 const USER_AGENT = "metadata-fetcher/1.0 (+https://example.com)"
 
-// Optional: whitelist to reduce SSRF risk (set to null to allow all)
-const HOST_WHITELIST: string[] | null = null // e.g. ["example.com", "youtube.com"]
-
-export type MetaResult = {
-  title?: string
-  description?: string
-  image?: string // best image / og:image / twitter:image
-  icon?: string // favicon / apple-touch-icon / mask-icon
-  site?: string // og:site_name or hostname
-  url: string // normalized target url
-}
+const HOST_WHITELIST: string[] | null = null
 
 function timeoutFetch(resource: RequestInfo, options: RequestInit = {}) {
   const controller = new AbortController()
@@ -62,7 +53,6 @@ export async function fetchMetadata(url: string) {
     if (!allowed) return { error: "Domain not allowed" }
   }
 
-  // Fetch page HTML
   let html: string
   try {
     const res = await timeoutFetch(parsed.toString(), {
@@ -76,7 +66,6 @@ export async function fetchMetadata(url: string) {
     return { error: "Network error" }
   }
 
-  // Parse
   const $ = cheerio.load(html)
 
   const getMeta = (prop: string) =>
@@ -99,10 +88,8 @@ export async function fetchMetadata(url: string) {
       getMeta("twitter:description")
     )?.trim() || undefined
 
-  // Candidate images (ordered by preference)
   const ogImage = getMeta("og:image")
   const twitterImage = getMeta("twitter:image")
-  // Parse link rel images (apple-touch-icon, icon, shortcut icon, mask-icon)
   const relImages: string[] = []
   $("link[rel]").each((_, el) => {
     const rel = ($(el).attr("rel") || "").toLowerCase()
@@ -112,7 +99,6 @@ export async function fetchMetadata(url: string) {
       relImages.push(href)
   })
 
-  // Also try to discover large images from og:image:secure_url and multiple og:image tags
   const extraOgImages: string[] = []
   $('meta[property^="og:image"]').each((_, el) => {
     const v = $(el).attr("content")
@@ -125,9 +111,7 @@ export async function fetchMetadata(url: string) {
     candidateImgs.map((i) => absoluteUrl(parsed.toString(), i)),
   )
 
-  // Choose icon separately (prefer apple-touch-icon, mask-icon, then favicon)
   let icon: string | undefined
-  // prefer common icon rels in order
   const preferredIconRels = [
     "apple-touch-icon",
     "apple-touch-icon-precomposed",
@@ -142,7 +126,7 @@ export async function fetchMetadata(url: string) {
       if (icon) break
     }
   }
-  // fallback: try any link rel containing icon
+
   if (!icon) {
     $("link[rel]").each((_, el) => {
       const rel = ($(el).attr("rel") || "").toLowerCase()
@@ -151,14 +135,13 @@ export async function fetchMetadata(url: string) {
       }
     })
   }
-  // fallback to /favicon.ico
   if (!icon) {
     icon = absoluteUrl(parsed.toString(), "/favicon.ico")
   }
 
   const site = getMeta("og:site_name") || parsed.hostname
 
-  const result: MetaResult = {
+  const result: Metadata = {
     url: parsed.toString(),
     title,
     description,

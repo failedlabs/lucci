@@ -23,6 +23,7 @@
   },
   "exports": {
     "./client": "./src/client.ts",
+    "./types": "./src/types.ts",
     "./use-query": "./src/use-query.ts",
     "./generated/*": "./convex/_generated/*"
   }

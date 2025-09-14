@@ -1,66 +1,13 @@
+import { readingsAtom, showNewReadingAtom } from "@/lib/atoms"
 import { Button } from "@lucci/ui/components/button"
 import { Card } from "@lucci/ui/components/card"
-import { Badge, BookOpen, Clock, ExternalLink } from "lucide-react"
-
-interface ReadingItem {
-  id: string
-  title: string
-  author: string
-  description: string
-  readTime: string
-  category: string
-  url: string
-  isRead?: boolean
-}
-
-const sampleReadingItems = [
-  {
-    id: "1",
-    title: "The Art of Readable Code",
-    author: "Dustin Boswell",
-    description:
-      "Simple and practical techniques for writing better code that any programmer can understand.",
-    readTime: "15 min",
-    category: "Programming",
-    url: "https://example.com/readable-code",
-    isRead: false,
-  },
-  {
-    id: "2",
-    title: "Atomic Design Methodology",
-    author: "Brad Frost",
-    description:
-      "A methodology for creating design systems by breaking down interfaces into their basic components.",
-    readTime: "8 min",
-    category: "Design",
-    url: "https://example.com/atomic-design",
-    isRead: true,
-  },
-  {
-    id: "3",
-    title: "The Psychology of Color in UI Design",
-    author: "Sarah Chen",
-    description:
-      "How color choices affect user behavior and emotional responses in digital interfaces.",
-    readTime: "12 min",
-    category: "UX/UI",
-    url: "https://example.com/color-psychology",
-    isRead: false,
-  },
-  {
-    id: "4",
-    title: "Modern CSS Layout Techniques",
-    author: "Rachel Andrew",
-    description:
-      "A comprehensive guide to CSS Grid, Flexbox, and other modern layout methods for responsive design.",
-    readTime: "20 min",
-    category: "CSS",
-    url: "https://example.com/css-layout",
-    isRead: false,
-  },
-]
+import { useAtomValue, useSetAtom } from "jotai"
+import { Badge, BookOpen, Clock, ExternalLink, Plus } from "lucide-react"
 
 export function ReadingList() {
+  const readingsList = useAtomValue(readingsAtom)
+  const setShowNewReading = useSetAtom(showNewReadingAtom)
+
   return (
     <div className={`w-full max-w-md px-5 pb-3`}>
       {/* Header */}
@@ -69,21 +16,27 @@ export function ReadingList() {
           Reading list
         </h2>
         <p className="text-muted-foreground text-sm">
-          {sampleReadingItems.length}{" "}
-          {sampleReadingItems.length === 1 ? "item" : "items"} in your list
+          {readingsList.length} {readingsList.length === 1 ? "item" : "items"}{" "}
+          in your list
         </p>
       </div>
 
       {/* Reading Items */}
       <div className="space-y-3">
-        {sampleReadingItems.map((item) => (
+        <Button
+          className="w-full"
+          variant={"outline"}
+          onClick={() => setShowNewReading(true)}
+        >
+          <Plus />
+        </Button>
+        {readingsList.reverse().map((item) => (
           <Card
-            key={item.id}
-            className="border-border bg-card p-4 transition-all duration-200 hover:shadow-md"
+            key={item._id}
+            className="border-border bg-card rounded-xl p-4 transition-all duration-200 hover:shadow-md"
           >
             <div className="space-y-2">
-              {/* Header with category and read time */}
-              <div className="flex items-center justify-between">
+              {/* <div className="flex items-center justify-between">
                 <Badge className="bg-muted text-muted-foreground text-xs">
                   {item.category}
                 </Badge>
@@ -91,27 +44,27 @@ export function ReadingList() {
                   <Clock className="h-3 w-3" />
                   {item.readTime}
                 </div>
-              </div>
+              </div> */}
 
               {/* Title and Author */}
               <div>
                 <h3 className="text-card-foreground mb-1 text-pretty font-medium leading-tight">
-                  {item.title}
+                  {item.name}
                 </h3>
                 <p className="text-muted-foreground text-sm">
-                  by {item.author}
+                  from {item.domain}
                 </p>
               </div>
 
               {/* Description */}
               <p className="text-card-foreground text-pretty text-sm leading-relaxed">
-                {item.description}
+                {item.metadata.description || ""}
               </p>
 
               {/* Actions */}
               <div className="flex items-center justify-between pt-2">
                 <div className="flex items-center gap-2">
-                  {item.isRead ? (
+                  {item.read ? (
                     <div className="text-muted-foreground flex items-center gap-1 text-xs">
                       <BookOpen className="h-3 w-3" />
                       Read
@@ -149,8 +102,8 @@ export function ReadingList() {
       </div>
 
       {/* Empty state */}
-      {sampleReadingItems.length === 0 && (
-        <Card className="bg-card border-border p-8 text-center">
+      {readingsList.length === 0 && (
+        <Card className="bg-card border-border mt-3 p-8 text-center">
           <BookOpen className="text-muted-foreground mx-auto mb-3 h-8 w-8" />
           <p className="text-muted-foreground text-sm">
             No items in your reading list yet
