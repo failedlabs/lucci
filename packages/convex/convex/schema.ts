@@ -1,5 +1,6 @@
+import { InferedMetadata } from "../src/types"
 import { defineSchema, defineTable } from "convex/server"
-import { v } from "convex/values"
+import { v, Validator } from "convex/values"
 
 export const bookmarkFields = {
   name: v.string(),
@@ -13,16 +14,17 @@ export const bookmarkFields = {
   isPrivate: v.boolean(),
   favorite: v.boolean(),
   tags: v.array(v.string()),
-  metadata: v.string(),
+  metadata: v.string() as Validator<InferedMetadata>,
 }
 
 export const readingsFields = {
   name: v.string(),
   url: v.string(),
   workspaceId: v.id("workspaces"),
+  domain: v.string(),
   ownerId: v.id("users"),
   read: v.boolean(),
-  metadata: v.string(),
+  metadata: v.string() as Validator<InferedMetadata>,
 }
 
 export const foldersFields = {

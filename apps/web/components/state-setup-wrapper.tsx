@@ -3,14 +3,13 @@
 import {
   bookmarksAtom,
   foldersAtom,
+  readingsAtom,
   userClerkIdAtom,
   userIdAtom,
   workspaceIdAtom,
   workspacesAtom,
 } from "@/lib/atoms"
-import { bookmarksMock, foldersMock, workspacesMock } from "@/mocks"
 import { api } from "@lucci/convex/generated/api.js"
-import { Id } from "@lucci/convex/generated/dataModel.js"
 import { useQuery } from "@lucci/convex/use-query"
 import { useAtom, useSetAtom } from "jotai"
 import { useEffect } from "react"
@@ -28,6 +27,7 @@ export function StateSetupWrapper({
   const setWorkspaces = useSetAtom(workspacesAtom)
   const setBookmarks = useSetAtom(bookmarksAtom)
   const setFolders = useSetAtom(foldersAtom)
+  const setReadings = useSetAtom(readingsAtom)
 
   const user = useQuery(api.users.currentUser)
   const workspaces = useQuery(api.workspaces.userWorkspaces)
@@ -37,6 +37,10 @@ export function StateSetupWrapper({
   )
   const bookmarks = useQuery(
     api.bookmarks.workspaceBookmarks,
+    workspaceId ? { id: workspaceId } : "skip",
+  )
+  const readings = useQuery(
+    api.readings.workspaceReadings,
     workspaceId ? { id: workspaceId } : "skip",
   )
 
@@ -63,7 +67,11 @@ export function StateSetupWrapper({
     if (bookmarks) {
       setBookmarks(bookmarks)
     }
-  }, [user, workspaces, folders, bookmarks])
+
+    if (readings) {
+      setReadings(readings)
+    }
+  }, [user, workspaces, folders, bookmarks, readings])
 
   return children
 }

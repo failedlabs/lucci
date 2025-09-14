@@ -17,7 +17,10 @@ export const workspaceReadings = query({
 
 export const createReading = mutation({
   args: readingsFields,
-  handler: async (ctx, { name, ownerId, workspaceId, url, metadata, read }) => {
+  handler: async (
+    ctx,
+    { name, ownerId, workspaceId, url, metadata, read, domain },
+  ) => {
     const id = await ctx.db.insert("readings", {
       metadata,
       name,
@@ -25,6 +28,7 @@ export const createReading = mutation({
       read,
       url,
       workspaceId,
+      domain,
     })
 
     return id

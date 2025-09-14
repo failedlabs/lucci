@@ -10,6 +10,7 @@ import { NewWorkspace } from "@/components/new-workspace"
 import { EditWorkspace } from "@/components/edit-workspace"
 import { Toaster } from "@lucci/ui/components/sonner"
 import { AppSection } from "@/components/app-section"
+import { NewReading } from "@/components/new-reading"
 
 export default async function AppLayout({
   children,
@@ -42,6 +43,7 @@ export default async function AppLayout({
       <NewFolder />
       <NewWorkspace />
       <EditWorkspace />
+      <NewReading />
 
       <Toaster />
     </Providers>

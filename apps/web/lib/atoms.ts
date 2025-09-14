@@ -8,10 +8,12 @@ export const showNewBookmarkAtom = atom<boolean>(false)
 export const showNewFolderAtom = atom<boolean>(false)
 export const showNewWorkspaceAtom = atom<boolean>(false)
 export const showEditWorkspaceAtom = atom<boolean>(false)
+export const showNewReadingAtom = atom<boolean>(false)
 
 export const workspacesAtom = atom<Doc<"workspaces">[]>([])
 export const foldersAtom = atom<Doc<"folders">[]>([])
 export const bookmarksAtom = atom<Doc<"bookmarks">[]>([])
+export const readingsAtom = atom<Doc<"readings">[]>([])
 
 export const workspaceIdAtom = atom<Id<"workspaces"> | null>(null)
 export const folderIdAtom = atom<Id<"folders"> | null>(null)
