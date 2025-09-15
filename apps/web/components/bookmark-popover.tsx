@@ -58,7 +58,9 @@ export function BookmarkPopover({ bookmark }: Props) {
           url: value.url === "" ? bookmark.url : value.url,
           domain: value.url === "" ? bookmark.domain : url.hostname,
           metadata:
-            value.url === "" ? bookmark.metadata : JSON.stringify(metadata) as InferedMetadata,
+            value.url === ""
+              ? bookmark.metadata
+              : (JSON.stringify(metadata) as InferedMetadata),
         }
         await mutateBookmark({
           values: newBookmark,
