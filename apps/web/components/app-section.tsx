@@ -21,7 +21,7 @@ export function AppSection() {
 
   return (
     <Card className="h-full w-full pb-0">
-      <CardHeader className="flex items-center justify-center">
+      {/* <CardHeader className="flex items-center justify-center">
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -50,7 +50,7 @@ export function AppSection() {
             <p>History</p>
           </TooltipContent>
         </Tooltip>
-      </CardHeader>
+      </CardHeader> */}
       <CardContent className="h-full w-full overflow-y-auto px-0">
         <ReadingList />
       </CardContent>
